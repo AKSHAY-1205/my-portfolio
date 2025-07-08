@@ -1,0 +1,813 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import {
+  Github,
+  Linkedin,
+  Mail,
+  ExternalLink,
+  ArrowUpRight,
+  Award,
+  BookOpen,
+  Code,
+  Brain,
+  MapPin,
+  Phone,
+  Send,
+  CheckCircle2,
+  Database,
+  Globe,
+  Star,
+  Rocket,
+  Target,
+} from "lucide-react"
+
+// Badge Component
+const Badge = ({ children, className = "" }) => {
+  return (
+    <div
+      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all duration-300 focus:outline-none hover:scale-105 hover:shadow-lg ${className}`}
+    >
+      {children}
+    </div>
+  )
+}
+
+// Section Header Component
+const SectionHeader = ({ icon, title, subtitle }) => {
+  return (
+    <div className="mb-8">
+      <div className="flex items-center gap-3 mb-2">
+        <div className="p-2 rounded-lg bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-400/30">
+          {icon}
+        </div>
+        <h2 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400">
+          {title}
+        </h2>
+      </div>
+      {subtitle && <p className="text-slate-400 text-sm ml-11">{subtitle}</p>}
+    </div>
+  )
+}
+
+// Skill Card Component
+const SkillCard = ({ icon, title, skills, gradient, borderColor, textColor, shadowColor }) => {
+  return (
+    <div
+      className={`group relative p-6 rounded-xl border ${borderColor} bg-gradient-to-br ${gradient} backdrop-blur-xl hover:shadow-xl ${shadowColor} transition-all duration-500 hover:scale-105 transform-gpu`}
+    >
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      <div className="relative z-10">
+        <div
+          className={`inline-flex p-3 rounded-lg bg-gradient-to-r ${gradient} border ${borderColor} mb-4 shadow-lg ${shadowColor}`}
+        >
+          {icon}
+        </div>
+        <h3
+          className={`text-base font-semibold ${textColor} mb-4 group-hover:text-white transition-colors duration-300`}
+        >
+          {title}
+        </h3>
+        <div className="flex flex-wrap gap-2">
+          {skills.map((skill, index) => (
+            <Badge
+              key={index}
+              className={`bg-gradient-to-r ${gradient} ${textColor} ${borderColor} hover:shadow-lg ${shadowColor} font-medium`}
+            >
+              {skill}
+            </Badge>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Project Card Component
+const ProjectCard = ({ project, gradient, borderColor, textColor, shadowColor }) => {
+  return (
+    <div
+      className={`group relative p-6 rounded-xl border ${borderColor} bg-gradient-to-br ${gradient} backdrop-blur-xl hover:shadow-xl ${shadowColor} transition-all duration-700 hover:scale-105 transform-gpu`}
+    >
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+      <div className="relative z-10">
+        <div className="flex items-start justify-between mb-4">
+          <div className={`p-3 rounded-lg bg-gradient-to-r ${gradient} border ${borderColor} shadow-lg ${shadowColor}`}>
+            {project.icon}
+          </div>
+          <a
+            href={project.link}
+            className={`p-2 rounded-lg ${textColor} hover:bg-white/20 transition-all duration-300 hover:scale-110`}
+          >
+            <ExternalLink className="h-4 w-4" />
+          </a>
+        </div>
+
+        <h3 className="text-lg font-semibold text-white mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-cyan-300 group-hover:to-purple-300 transition-all duration-500">
+          {project.title}
+        </h3>
+
+        <p className="text-slate-300 text-sm leading-relaxed mb-4 group-hover:text-slate-200 transition-colors duration-300">
+          {project.description}
+        </p>
+
+        <div className="flex flex-wrap gap-2 mb-4">
+          {project.technologies.map((tech, techIndex) => (
+            <Badge
+              key={techIndex}
+              className={`bg-gradient-to-r ${gradient} ${textColor} ${borderColor} hover:shadow-lg ${shadowColor} font-medium`}
+            >
+              {tech}
+            </Badge>
+          ))}
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Star className="h-3 w-3 fill-current text-yellow-400" />
+            <span className="text-yellow-300 font-medium text-sm">{project.stars}</span>
+          </div>
+          <span className={`px-2 py-1 rounded-full text-xs font-medium ${textColor} bg-white/10`}>
+            {project.status}
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function App() {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [activeSection, setActiveSection] = useState("about")
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState("")
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePosition({ x: e.clientX, y: e.clientY })
+    }
+
+    const handleScroll = () => {
+      const sections = ["about", "skills", "projects", "certifications", "contact"]
+      const scrollPosition = window.scrollY + 200
+
+      for (const section of sections) {
+        const element = document.getElementById(section)
+        if (element) {
+          const { offsetTop, offsetHeight } = element
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+            setActiveSection(section)
+            break
+          }
+        }
+      }
+    }
+
+    window.addEventListener("mousemove", handleMouseMove)
+    window.addEventListener("scroll", handleScroll)
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove)
+      window.removeEventListener("scroll", handleScroll)
+    }
+  }, [])
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+
+    // Simulate form submission
+    setTimeout(() => {
+      setIsSubmitting(false)
+      setSubmitStatus("success")
+      setFormData({ name: "", email: "", message: "" })
+
+      setTimeout(() => setSubmitStatus(""), 3000)
+    }, 2000)
+  }
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    })
+  }
+
+  const skills = {
+    frontend: {
+      title: "Frontend Development",
+      skills: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Vue.js"],
+      icon: <Globe className="h-5 w-5" />,
+      gradient: "from-cyan-500/20 to-blue-500/20",
+      borderColor: "border-cyan-400/50",
+      textColor: "text-cyan-300",
+      shadowColor: "shadow-cyan-500/30",
+    },
+    backend: {
+      title: "Backend Development",
+      skills: ["Node.js", "Python", "Express", "FastAPI", "PostgreSQL"],
+      icon: <Database className="h-5 w-5" />,
+      gradient: "from-emerald-500/20 to-teal-500/20",
+      borderColor: "border-emerald-400/50",
+      textColor: "text-emerald-300",
+      shadowColor: "shadow-emerald-500/30",
+    },
+    ai: {
+      title: "AI & Machine Learning",
+      skills: ["TensorFlow", "PyTorch", "OpenAI API", "Scikit-learn", "OpenCV"],
+      icon: <Brain className="h-5 w-5" />,
+      gradient: "from-purple-500/20 to-pink-500/20",
+      borderColor: "border-purple-400/50",
+      textColor: "text-purple-300",
+      shadowColor: "shadow-purple-500/30",
+    },
+    tools: {
+      title: "Tools & Platforms",
+      skills: ["Git", "Docker", "AWS", "Vercel", "Figma"],
+      icon: <Code className="h-5 w-5" />,
+      gradient: "from-orange-500/20 to-red-500/20",
+      borderColor: "border-orange-400/50",
+      textColor: "text-orange-300",
+      shadowColor: "shadow-orange-500/30",
+    },
+  }
+
+  const projects = [
+    {
+      title: "AI-Powered Code Review Assistant",
+      description:
+        "Full-stack application that uses natural language processing to analyze code quality, suggest improvements, and detect potential bugs. Built with React frontend, Node.js backend, and integrated OpenAI GPT models.",
+      technologies: ["React", "Node.js", "OpenAI API", "MongoDB", "TypeScript"],
+      icon: <Brain className="h-5 w-5" />,
+      link: "#",
+      stars: "324",
+      status: "🚀 Live",
+      gradient: "from-purple-500/20 to-pink-500/20",
+      borderColor: "border-purple-400/50",
+      textColor: "text-purple-300",
+      shadowColor: "shadow-purple-500/30",
+    },
+    {
+      title: "Real-time Object Detection System",
+      description:
+        "Computer vision application using YOLO v8 for real-time object detection and tracking. Features a web interface built with Flask and WebSocket for live video streaming and detection results visualization.",
+      technologies: ["Python", "YOLO v8", "OpenCV", "Flask", "WebSocket"],
+      icon: <Target className="h-5 w-5" />,
+      link: "#",
+      stars: "189",
+      status: "✅ Complete",
+      gradient: "from-emerald-500/20 to-teal-500/20",
+      borderColor: "border-emerald-400/50",
+      textColor: "text-emerald-300",
+      shadowColor: "shadow-emerald-500/30",
+    },
+    {
+      title: "Smart Task Management App",
+      description:
+        "Full-stack productivity app with AI-powered task prioritization and scheduling. Uses machine learning to analyze user behavior patterns and suggest optimal task scheduling.",
+      technologies: ["React", "TypeScript", "Express", "PostgreSQL", "Redis"],
+      icon: <Rocket className="h-5 w-5" />,
+      link: "#",
+      stars: "256",
+      status: "🚀 Live",
+      gradient: "from-cyan-500/20 to-blue-500/20",
+      borderColor: "border-cyan-400/50",
+      textColor: "text-cyan-300",
+      shadowColor: "shadow-cyan-500/30",
+    },
+  ]
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 relative overflow-hidden">
+      {/* Enhanced background effects */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-600/10 via-blue-600/10 to-purple-600/10"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-cyan-900/20 via-slate-900/20 to-purple-900/20"></div>
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-500"></div>
+      </div>
+
+      {/* Mouse follower effect */}
+      <div
+        className="pointer-events-none fixed inset-0 z-30 transition duration-300"
+        style={{
+          background: `radial-gradient(600px at ${mousePosition.x}px ${mousePosition.y}px, rgba(6, 182, 212, 0.15), transparent 80%)`,
+        }}
+      />
+
+      {/* Container with proper spacing matching the reference */}
+      <div className="mx-auto max-w-screen-xl px-6 py-12 md:px-12 md:py-20 lg:px-24 lg:py-0">
+        <div className="lg:flex lg:justify-between lg:gap-4">
+          {/* Fixed Left Column - Header & Navigation (40%) */}
+          <aside className="lg:sticky lg:top-0 lg:h-screen lg:flex lg:w-1/2 lg:flex-col lg:justify-between lg:py-24 overflow-hidden">
+  <div>
+    <div className="group mb-8">
+      <h1 className="text-4xl font-bold tracking-tight text-slate-200 sm:text-5xl mb-3 group-hover:text-white transition-colors duration-300">
+        Alex Johnson
+      </h1>
+      <h2 className="text-xl font-medium tracking-tight text-slate-300 mb-4">
+        AI/ML Student & Full Stack Developer
+      </h2>
+      <p className="text-slate-400 leading-normal max-w-xs">
+        I build accessible, pixel-perfect digital experiences for the web.
+      </p>
+    </div>
+
+    {/* Enhanced Navigation */}
+    <nav className="nav" aria-label="In-page jump links">
+      <ul className="mt-16 w-max">
+        {[
+          { id: "about", label: "ABOUT" },
+          { id: "skills", label: "SKILLS" },
+          { id: "projects", label: "PROJECTS" },
+          { id: "certifications", label: "CERTIFICATIONS" },
+          { id: "contact", label: "CONTACT" },
+        ].map((item) => (
+          <li key={item.id}>
+            <a
+              className={`group flex items-center py-3 nav-link transition-all duration-300 ${
+                activeSection === item.id ? "active" : ""
+              }`}
+              href={`#${item.id}`}
+            >
+              <span
+                className={`nav-indicator mr-4 h-px bg-slate-600 transition-all duration-300 ${
+                  activeSection === item.id
+                    ? "w-16 bg-slate-200"
+                    : "w-8 group-hover:w-16 group-hover:bg-slate-200"
+                }`}
+              ></span>
+              <span
+                className={`nav-text text-xs font-bold uppercase tracking-widest transition-all duration-300 ${
+                  activeSection === item.id
+                    ? "text-slate-200"
+                    : "text-slate-500 group-hover:text-slate-200"
+                }`}
+              >
+                {item.label}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+
+  {/* Social Links */}
+  <div className="mt-8">
+    <div className="flex items-center gap-5">
+      <a
+        className="text-slate-400 hover:text-slate-200 transition-colors duration-300"
+        href="https://github.com"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <Github className="h-6 w-6" />
+      </a>
+      <a
+        className="text-slate-400 hover:text-slate-200 transition-colors duration-300"
+        href="https://linkedin.com"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <Linkedin className="h-6 w-6" />
+      </a>
+      <a
+        className="text-slate-400 hover:text-slate-200 transition-colors duration-300"
+        href="mailto:alex@example.com"
+      >
+        <Mail className="h-6 w-6" />
+      </a>
+    </div>
+  </div>
+</aside>
+
+
+          {/* Right Column - Main Content (60%) */}
+          <main className="pt-24 lg:w-1/2 lg:py-24">
+            {/* About Section */}
+            <section id="about" className="mb-16 scroll-mt-16 md:mb-24 lg:mb-36 lg:scroll-mt-24">
+              <div className="sticky top-0 z-20 -mx-6 mb-4 w-screen bg-slate-900/75 px-6 py-5 backdrop-blur md:-mx-12 md:px-12 lg:sr-only lg:relative lg:top-auto lg:mx-auto lg:w-full lg:px-0 lg:py-0 lg:opacity-0">
+                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-200 lg:sr-only">About</h2>
+              </div>
+
+              <div className="space-y-4">
+                <p className="text-slate-400 leading-normal">
+                  I'm an AI/ML student passionate about creating intelligent systems that solve real-world problems. My
+                  journey combines the analytical power of machine learning with the creativity of full-stack
+                  development, allowing me to build end-to-end solutions that are both smart and user-friendly.
+                </p>
+
+                <p className="text-slate-400 leading-normal">
+                  Currently pursuing my degree in{" "}
+                  <a className="font-medium text-slate-200 hover:text-cyan-300 focus-visible:text-cyan-300 transition-colors duration-300">
+                    Computer Science with specialization in AI/ML
+                  </a>
+                  , I spend my time exploring deep learning frameworks, building neural networks, and developing
+                  full-stack applications that integrate AI capabilities seamlessly.
+                </p>
+
+                <p className="text-slate-400 leading-normal">
+                  My projects span from{" "}
+                  <a className="font-medium text-slate-200 hover:text-cyan-300 focus-visible:text-cyan-300 transition-colors duration-300">
+                    computer vision applications
+                  </a>{" "}
+                  and{" "}
+                  <a className="font-medium text-slate-200 hover:text-cyan-300 focus-visible:text-cyan-300 transition-colors duration-300">
+                    natural language processing
+                  </a>{" "}
+                  to{" "}
+                  <a className="font-medium text-slate-200 hover:text-cyan-300 focus-visible:text-cyan-300 transition-colors duration-300">
+                    modern web applications
+                  </a>{" "}
+                  and{" "}
+                  <a className="font-medium text-slate-200 hover:text-cyan-300 focus-visible:text-cyan-300 transition-colors duration-300">
+                    mobile development
+                  </a>
+                  . I believe in learning by building, and each project teaches me something new about the intersection
+                  of AI and software engineering.
+                </p>
+
+                <p className="text-slate-400 leading-normal">
+                  When I'm not coding or training models, you can find me contributing to open-source projects,
+                  participating in hackathons, reading research papers, or exploring the latest developments in
+                  generative AI and large language models.
+                </p>
+              </div>
+            </section>
+
+            {/* Skills Section */}
+            <section id="skills" className="mb-16 scroll-mt-16 md:mb-24 lg:mb-36 lg:scroll-mt-24">
+              <div className="sticky top-0 z-20 -mx-6 mb-4 w-screen bg-slate-900/75 px-6 py-5 backdrop-blur md:-mx-12 md:px-12 lg:sr-only lg:relative lg:top-auto lg:mx-auto lg:w-full lg:px-0 lg:py-0 lg:opacity-0">
+                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-200 lg:sr-only">Skills</h2>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2">
+                {Object.values(skills).map((skill, index) => (
+                  <SkillCard
+                    key={index}
+                    icon={skill.icon}
+                    title={skill.title}
+                    skills={skill.skills}
+                    gradient={skill.gradient}
+                    borderColor={skill.borderColor}
+                    textColor={skill.textColor}
+                    shadowColor={skill.shadowColor}
+                  />
+                ))}
+              </div>
+            </section>
+
+            {/* Projects Section */}
+            <section id="projects" className="mb-16 scroll-mt-16 md:mb-24 lg:mb-36 lg:scroll-mt-24">
+              <div className="sticky top-0 z-20 -mx-6 mb-4 w-screen bg-slate-900/75 px-6 py-5 backdrop-blur md:-mx-12 md:px-12 lg:sr-only lg:relative lg:top-auto lg:mx-auto lg:w-full lg:px-0 lg:py-0 lg:opacity-0">
+                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-200 lg:sr-only">Projects</h2>
+              </div>
+
+              <div>
+                <ul className="group/list space-y-8">
+                  {projects.map((project, index) => (
+                    <li key={index}>
+                      <div className="group relative grid gap-4 pb-1 transition-all sm:grid-cols-8 sm:gap-8 md:gap-4 lg:hover:!opacity-100 lg:group-hover/list:opacity-50">
+                        <div className="absolute -inset-x-4 -inset-y-4 z-0 hidden rounded-md transition motion-reduce:transition-none lg:-inset-x-6 lg:block lg:group-hover:bg-slate-800/50 lg:group-hover:shadow-[inset_0_1px_0_0_rgba(148,163,184,0.1)] lg:group-hover:drop-shadow-lg"></div>
+                        <div className="z-10 sm:order-2 sm:col-span-6">
+                          <h3>
+                            <a
+                              className="inline-flex items-baseline font-medium leading-tight text-slate-200 hover:text-cyan-300 focus-visible:text-cyan-300 group/link text-base transition-colors duration-300"
+                              href={project.link}
+                            >
+                              <span className="absolute -inset-x-4 -inset-y-2.5 hidden rounded md:-inset-x-6 md:-inset-y-4 lg:block"></span>
+                              <span>
+                                {project.title}
+                                <ExternalLink className="inline-block h-4 w-4 shrink-0 transition-transform group-hover/link:-translate-y-1 group-hover/link:translate-x-1 group-focus-visible/link:-translate-y-1 group-focus-visible/link:translate-x-1 motion-reduce:transition-none ml-1 translate-y-px" />
+                              </span>
+                            </a>
+                          </h3>
+                          <p className="mt-2 text-sm leading-normal text-slate-400">{project.description}</p>
+                          <ul className="mt-2 flex flex-wrap">
+                            {project.technologies.map((tech, techIndex) => (
+                              <li key={techIndex} className="mr-1.5 mt-2">
+                                <Badge
+                                  className={`bg-gradient-to-r ${project.gradient} ${project.textColor} ${project.borderColor} hover:shadow-lg ${project.shadowColor} font-medium`}
+                                >
+                                  {tech}
+                                </Badge>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="z-10 sm:order-1 sm:col-span-2 sm:translate-y-1">
+                          <div
+                            className={`rounded border-2 ${project.borderColor} transition group-hover:${project.borderColor} bg-gradient-to-br ${project.gradient} p-4 h-24 flex items-center justify-center group-hover:shadow-lg ${project.shadowColor}`}
+                          >
+                            {project.icon}
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-12">
+                  <a
+                    className="inline-flex items-center font-medium leading-tight text-slate-200 font-semibold group hover:text-cyan-300 transition-all duration-300"
+                    href="/projects"
+                  >
+                    <span>
+                      <span className="border-b border-transparent pb-px transition group-hover:border-cyan-300 motion-reduce:transition-none">
+                        View Full Project Archive
+                      </span>
+                      <span className="whitespace-nowrap">
+                        <ArrowUpRight className="ml-1 inline-block h-4 w-4 shrink-0 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1 group-focus-visible:-translate-y-1 group-focus-visible:translate-x-1 motion-reduce:transition-none" />
+                      </span>
+                    </span>
+                  </a>
+                </div>
+              </div>
+            </section>
+
+            {/* Certifications Section */}
+            <section id="certifications" className="mb-16 scroll-mt-16 md:mb-24 lg:mb-36 lg:scroll-mt-24">
+              <div className="sticky top-0 z-20 -mx-6 mb-4 w-screen bg-slate-900/75 px-6 py-5 backdrop-blur md:-mx-12 md:px-12 lg:sr-only lg:relative lg:top-auto lg:mx-auto lg:w-full lg:px-0 lg:py-0 lg:opacity-0">
+                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-200 lg:sr-only">
+                  Certifications
+                </h2>
+              </div>
+
+              <div>
+                <ol className="group/list space-y-8">
+                  {[
+                    {
+                      title: "Machine Learning Specialization",
+                      issuer: "Stanford University (Coursera)",
+                      year: "2024",
+                      icon: <Award className="h-4 w-4 text-purple-400" />,
+                      skills: ["Python", "TensorFlow", "Scikit-learn", "NumPy"],
+                      gradient: "from-emerald-500/20 to-teal-500/20",
+                      borderColor: "border-emerald-400/50",
+                      textColor: "text-emerald-300",
+                      shadowColor: "shadow-emerald-500/30",
+                    },
+                    {
+                      title: "Full Stack Web Development",
+                      issuer: "Meta (Coursera)",
+                      year: "2024",
+                      icon: <Code className="h-4 w-4 text-blue-400" />,
+                      skills: ["React", "Node.js", "JavaScript", "MongoDB"],
+                      gradient: "from-cyan-500/20 to-blue-500/20",
+                      borderColor: "border-cyan-400/50",
+                      textColor: "text-cyan-300",
+                      shadowColor: "shadow-cyan-500/30",
+                    },
+                    {
+                      title: "Deep Learning Specialization",
+                      issuer: "DeepLearning.AI",
+                      year: "2023",
+                      icon: <BookOpen className="h-4 w-4 text-teal-400" />,
+                      skills: ["PyTorch", "CNN", "RNN", "Transformers"],
+                      gradient: "from-purple-500/20 to-pink-500/20",
+                      borderColor: "border-purple-400/50",
+                      textColor: "text-purple-300",
+                      shadowColor: "shadow-purple-500/30",
+                    },
+                  ].map((cert, index) => (
+                    <li key={index}>
+                      <div className="group relative grid pb-1 transition-all sm:grid-cols-8 sm:gap-8 md:gap-4 lg:hover:!opacity-100 lg:group-hover/list:opacity-50">
+                        <div className="absolute -inset-x-4 -inset-y-4 z-0 hidden rounded-md transition motion-reduce:transition-none lg:-inset-x-6 lg:block lg:group-hover:bg-slate-800/50 lg:group-hover:shadow-[inset_0_1px_0_0_rgba(148,163,184,0.1)] lg:group-hover:drop-shadow-lg"></div>
+                        <header className="z-10 mb-2 mt-1 text-xs font-semibold uppercase tracking-wide text-slate-500 sm:col-span-2 flex items-center gap-2">
+                          <div
+                            className={`p-2 rounded-lg bg-gradient-to-r ${cert.gradient} border ${cert.borderColor}`}
+                          >
+                            {cert.icon}
+                          </div>
+                          <span>{cert.year}</span>
+                        </header>
+                        <div className="z-10 sm:col-span-6">
+                          <h3 className="font-medium leading-snug text-slate-200">
+                            <a
+                              className="inline-flex items-baseline font-medium leading-tight text-slate-200 hover:text-cyan-300 focus-visible:text-cyan-300 group/link text-base transition-colors duration-300"
+                              href="#"
+                            >
+                              <span className="absolute -inset-x-4 -inset-y-2.5 hidden rounded md:-inset-x-6 md:-inset-y-4 lg:block"></span>
+                              <span>
+                                {cert.title} ·{" "}
+                                <span className="inline-block">
+                                  {cert.issuer}
+                                  <ArrowUpRight className="inline-block h-4 w-4 shrink-0 transition-transform group-hover/link:-translate-y-1 group-hover/link:translate-x-1 group-focus-visible/link:-translate-y-1 group-focus-visible/link:translate-x-1 motion-reduce:transition-none ml-1 translate-y-px" />
+                                </span>
+                              </span>
+                            </a>
+                          </h3>
+                          <p className="mt-2 text-sm leading-normal text-slate-400">
+                            {cert.title === "Machine Learning Specialization" &&
+                              "Comprehensive specialization covering supervised learning, unsupervised learning, and reinforcement learning. Built and deployed ML models using Python, NumPy, scikit-learn, and TensorFlow."}
+                            {cert.title === "Full Stack Web Development" &&
+                              "Professional certificate covering front-end and back-end development. Built responsive web applications using React, Node.js, and modern development practices including version control and deployment."}
+                            {cert.title === "Deep Learning Specialization" &&
+                              "Advanced specialization in neural networks and deep learning. Covered CNNs, RNNs, LSTMs, and attention mechanisms. Built projects in computer vision, NLP, and sequence modeling."}
+                          </p>
+                          <ul className="mt-2 flex flex-wrap">
+                            {cert.skills.map((skill, skillIndex) => (
+                              <li key={skillIndex} className="mr-1.5 mt-2">
+                                <Badge
+                                  className={`bg-gradient-to-r ${cert.gradient} ${cert.textColor} ${cert.borderColor} hover:shadow-lg ${cert.shadowColor} font-medium`}
+                                >
+                                  {skill}
+                                </Badge>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+
+                <div className="mt-12">
+                  <a
+                    className="inline-flex items-center font-medium leading-tight text-slate-200 font-semibold group hover:text-cyan-300 transition-all duration-300"
+                    href="/certifications"
+                  >
+                    <span>
+                      <span className="border-b border-transparent pb-px transition group-hover:border-cyan-300 motion-reduce:transition-none">
+                        View All Certifications
+                      </span>
+                      <span className="whitespace-nowrap">
+                        <ArrowUpRight className="ml-1 inline-block h-4 w-4 shrink-0 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1 group-focus-visible:-translate-y-1 group-focus-visible:translate-x-1 motion-reduce:transition-none" />
+                      </span>
+                    </span>
+                  </a>
+                </div>
+              </div>
+            </section>
+
+            {/* Contact Section */}
+            <section id="contact" className="mb-16 scroll-mt-16 md:mb-24 lg:mb-36 lg:scroll-mt-24">
+              <div className="sticky top-0 z-20 -mx-6 mb-4 w-screen bg-slate-900/75 px-6 py-5 backdrop-blur md:-mx-12 md:px-12 lg:sr-only lg:relative lg:top-auto lg:mx-auto lg:w-full lg:px-0 lg:py-0 lg:opacity-0">
+                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-200 lg:sr-only">Contact</h2>
+              </div>
+
+              <div className="grid gap-8 md:grid-cols-2">
+                {/* Contact Info */}
+                <div className="space-y-6">
+                  <div className="p-6 rounded-xl border border-slate-700/50 bg-gradient-to-br from-slate-800/30 to-slate-900/30 hover:border-cyan-400/30 hover:shadow-lg hover:shadow-cyan-500/10 transition-all duration-300">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 rounded-lg bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-400/30">
+                        <Mail className="h-4 w-4 text-cyan-400" />
+                      </div>
+                      <h3 className="font-medium text-slate-200">Email</h3>
+                    </div>
+                    <p className="text-slate-400 text-sm">alex.johnson@example.com</p>
+                  </div>
+
+                  <div className="p-6 rounded-xl border border-slate-700/50 bg-gradient-to-br from-slate-800/30 to-slate-900/30 hover:border-emerald-400/30 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 rounded-lg bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-400/30">
+                        <Phone className="h-4 w-4 text-emerald-400" />
+                      </div>
+                      <h3 className="font-medium text-slate-200">Phone</h3>
+                    </div>
+                    <p className="text-slate-400 text-sm">+1 (555) 123-4567</p>
+                  </div>
+
+                  <div className="p-6 rounded-xl border border-slate-700/50 bg-gradient-to-br from-slate-800/30 to-slate-900/30 hover:border-purple-400/30 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30">
+                        <MapPin className="h-4 w-4 text-purple-400" />
+                      </div>
+                      <h3 className="font-medium text-slate-200">Location</h3>
+                    </div>
+                    <p className="text-slate-400 text-sm">San Francisco, CA</p>
+                  </div>
+                </div>
+
+                {/* Contact Form */}
+                <div className="p-6 rounded-xl border border-slate-700/50 bg-gradient-to-br from-slate-800/30 to-slate-900/30">
+                  <form onSubmit={handleFormSubmit} className="space-y-4">
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-2">
+                        Name
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 rounded-lg bg-slate-800/50 border border-slate-700/50 text-slate-200 placeholder-slate-500 focus:border-cyan-400/50 focus:outline-none transition-colors duration-300 text-sm"
+                        placeholder="Your name"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 rounded-lg bg-slate-800/50 border border-slate-700/50 text-slate-200 placeholder-slate-500 focus:border-cyan-400/50 focus:outline-none transition-colors duration-300 text-sm"
+                        placeholder="your.email@example.com"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="message" className="block text-sm font-medium text-slate-300 mb-2">
+                        Message
+                      </label>
+                      <textarea
+                        id="message"
+                        name="message"
+                        value={formData.message}
+                        onChange={handleInputChange}
+                        rows={4}
+                        className="w-full px-3 py-2 rounded-lg bg-slate-800/50 border border-slate-700/50 text-slate-200 placeholder-slate-500 focus:border-cyan-400/50 focus:outline-none transition-colors duration-300 resize-none text-sm"
+                        placeholder="Tell me about your project or opportunity..."
+                        required
+                      ></textarea>
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-medium hover:from-cyan-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/25 text-sm"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="h-4 w-4" />
+                          Send Message
+                        </>
+                      )}
+                    </button>
+
+                    {submitStatus === "success" && (
+                      <div className="flex items-center gap-2 p-3 rounded-lg bg-emerald-500/20 border border-emerald-400/50 text-emerald-200">
+                        <CheckCircle2 className="h-4 w-4" />
+                        <span className="font-medium text-sm">
+                          Message sent successfully! I'll get back to you soon.
+                        </span>
+                      </div>
+                    )}
+                  </form>
+                </div>
+              </div>
+            </section>
+
+            <footer className="max-w-md pb-16 text-sm text-slate-500 sm:pb-0">
+              <p className="leading-normal">
+                Designed in{" "}
+                <a
+                  href="https://www.figma.com/"
+                  className="font-medium text-slate-400 hover:text-cyan-300 focus-visible:text-cyan-300 transition-colors duration-300"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Figma
+                </a>{" "}
+                and coded in{" "}
+                <a
+                  href="https://code.visualstudio.com/"
+                  className="font-medium text-slate-400 hover:text-cyan-300 focus-visible:text-cyan-300 transition-colors duration-300"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Visual Studio Code
+                </a>{" "}
+                with lots of ☕ and 🎵. Built with{" "}
+                <a
+                  href="https://reactjs.org/"
+                  className="font-medium text-slate-400 hover:text-cyan-300 focus-visible:text-cyan-300 transition-colors duration-300"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  React
+                </a>{" "}
+                and{" "}
+                <a
+                  href="https://tailwindcss.com/"
+                  className="font-medium text-slate-400 hover:text-cyan-300 focus-visible:text-cyan-300 transition-colors duration-300"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Tailwind CSS
+                </a>
+                .
+              </p>
+            </footer>
+          </main>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default App
