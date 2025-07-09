@@ -25,6 +25,7 @@ import {
   Building,
   Eye,
   Download,
+  Menu,
 } from "lucide-react"
 
 // Enhanced Badge Component
@@ -85,13 +86,108 @@ const FloatingParticles = () => {
   )
 }
 
+// Mobile Navigation Component
+const MobileNavigation = ({ activeSection, isOpen, onToggle }) => {
+  const navItems = [
+    { id: "about", label: "ABOUT" },
+    { id: "skills", label: "SKILLS" },
+    { id: "projects", label: "PROJECTS" },
+    { id: "certifications", label: "CERTIFICATIONS" },
+    { id: "contact", label: "CONTACT" },
+  ]
+
+  return (
+    <>
+      {/* Mobile Menu Button */}
+      <motion.button
+        className="lg:hidden fixed top-6 right-6 z-50 p-3 rounded-xl bg-slate-800/90 backdrop-blur-sm border border-slate-700/50 text-slate-200"
+        onClick={onToggle}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <Menu className="h-6 w-6" />
+      </motion.button>
+
+      {/* Mobile Navigation Overlay */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="lg:hidden fixed inset-0 z-40 bg-slate-950/95 backdrop-blur-md"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onToggle}
+          >
+            <motion.nav
+              className="flex flex-col items-center justify-center h-full"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <ul className="space-y-8">
+                {navItems.map((item, index) => (
+                  <motion.li
+                    key={item.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <motion.a
+                      className={`block text-2xl font-bold uppercase tracking-wider transition-all duration-300 ${
+                        activeSection === item.id ? "text-cyan-300" : "text-slate-400 hover:text-white"
+                      }`}
+                      href={`#${item.id}`}
+                      onClick={onToggle}
+                      whileHover={{ scale: 1.1, x: 10 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {item.label}
+                    </motion.a>
+                  </motion.li>
+                ))}
+              </ul>
+
+              {/* Mobile Social Links */}
+              <motion.div
+                className="flex items-center gap-6 mt-12"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+              >
+                {[
+                  { icon: Github, href: "https://github.com/AKSHAY-1205", label: "GitHub" },
+                  { icon: Linkedin, href: "https://www.linkedin.com/in/akshay-j-739397259/", label: "LinkedIn" },
+                  { icon: Mail, href: "mailto:akshayjagadeesh05@gmail.com", label: "Email" },
+                ].map((social, index) => (
+                  <motion.a
+                    key={social.label}
+                    className="text-slate-400 hover:text-cyan-300 transition-colors duration-300"
+                    href={social.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    whileHover={{ scale: 1.2, y: -5 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <social.icon className="h-8 w-8" />
+                  </motion.a>
+                ))}
+              </motion.div>
+            </motion.nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  )
+}
+
 // Professional Skill Card
 const SkillCard = ({ icon, title, skills, gradient, borderColor, textColor, shadowColor, index }) => {
   const [isHovered, setIsHovered] = useState(false)
 
   return (
     <motion.div
-      className={`group relative p-8 rounded-2xl border ${borderColor} bg-gradient-to-br ${gradient} backdrop-blur-xl transition-all duration-500 cursor-pointer overflow-hidden`}
+      className={`group relative p-6 lg:p-8 rounded-2xl border ${borderColor} bg-gradient-to-br ${gradient} backdrop-blur-xl transition-all duration-500 cursor-pointer overflow-hidden`}
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -113,7 +209,7 @@ const SkillCard = ({ icon, title, skills, gradient, borderColor, textColor, shad
 
       {/* Icon */}
       <motion.div
-        className={`inline-flex p-4 rounded-xl bg-gradient-to-r ${gradient} border ${borderColor} mb-6 shadow-lg relative z-10`}
+        className={`inline-flex p-3 lg:p-4 rounded-xl bg-gradient-to-r ${gradient} border ${borderColor} mb-4 lg:mb-6 shadow-lg relative z-10`}
         animate={isHovered ? { y: -5, scale: 1.05 } : { y: 0, scale: 1 }}
         transition={{ duration: 0.3 }}
       >
@@ -121,7 +217,7 @@ const SkillCard = ({ icon, title, skills, gradient, borderColor, textColor, shad
       </motion.div>
 
       <motion.h3
-        className={`text-lg font-semibold ${textColor} mb-6 group-hover:text-white transition-colors duration-300 relative z-10`}
+        className={`text-lg font-semibold ${textColor} mb-4 lg:mb-6 group-hover:text-white transition-colors duration-300 relative z-10`}
         animate={isHovered ? { x: 5 } : { x: 0 }}
         transition={{ duration: 0.3 }}
       >
@@ -183,9 +279,9 @@ const CertificateViewer = ({ isOpen, onClose, certificate }) => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-slate-700">
+            <div className="flex items-center justify-between p-4 lg:p-6 border-b border-slate-700">
               <div>
-                <h3 className="text-xl font-semibold text-white">{certificate?.title}</h3>
+                <h3 className="text-lg lg:text-xl font-semibold text-white">{certificate?.title}</h3>
                 <p className="text-slate-400">{certificate?.issuer}</p>
               </div>
               <div className="flex items-center gap-3">
@@ -210,17 +306,17 @@ const CertificateViewer = ({ isOpen, onClose, certificate }) => {
             </div>
 
             {/* Certificate Content - Now shows actual PDF */}
-            <div className="p-4 bg-slate-800/50 min-h-[600px]">
+            <div className="p-4 bg-slate-800/50 min-h-[400px] lg:min-h-[600px]">
               {certificate?.googleDriveUrl ? (
                 <iframe
                   src={certificate.googleDriveUrl}
-                  className="w-full h-[600px] rounded-lg border border-slate-600"
+                  className="w-full h-[400px] lg:h-[600px] rounded-lg border border-slate-600"
                   title={`${certificate.title} Certificate`}
                   frameBorder="0"
                   allowFullScreen
                 />
               ) : (
-                <div className="flex items-center justify-center h-[600px]">
+                <div className="flex items-center justify-center h-[400px] lg:h-[600px]">
                   <div className="text-center">
                     <div className="w-24 h-24 bg-gradient-to-br from-slate-700 to-slate-800 rounded-2xl flex items-center justify-center mb-6 mx-auto">
                       <Award className="h-12 w-12 text-slate-400" />
@@ -268,7 +364,7 @@ const CertificationCard = ({ certification, index }) => {
           }}
         />
 
-        <div className="flex items-start gap-4 relative z-10">
+        <div className="flex flex-col sm:flex-row items-start gap-4 relative z-10">
           <motion.div
             className={`p-3 rounded-xl bg-gradient-to-r ${certification.gradient} border ${certification.borderColor} shadow-lg`}
             animate={isHovered ? { scale: 1.1, rotate: 5 } : { scale: 1, rotate: 0 }}
@@ -286,7 +382,7 @@ const CertificationCard = ({ certification, index }) => {
               {certification.title}
             </motion.h3>
             <p className="text-slate-400 text-sm mb-3">{certification.issuer}</p>
-            <div className="flex items-center gap-4 text-xs text-slate-500 mb-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 text-xs text-slate-500 mb-4">
               <div className="flex items-center gap-1">
                 <Calendar className="h-3 w-3" />
                 <span>{certification.date}</span>
@@ -397,38 +493,38 @@ const ProjectArchive = ({ isOpen, onClose, projects }) => {
           >
             {/* Clean Header */}
             <motion.div
-              className="sticky top-0 bg-gradient-to-r from-slate-900/98 to-slate-800/98 backdrop-blur-xl border-b border-slate-700/50 p-8 flex items-center justify-between"
+              className="sticky top-0 bg-gradient-to-r from-slate-900/98 to-slate-800/98 backdrop-blur-xl border-b border-slate-700/50 p-6 lg:p-8 flex items-center justify-between"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.3 }}
             >
               <div>
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-3">
+                <h2 className="text-2xl lg:text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-2 lg:mb-3">
                   Project Archive
                 </h2>
-                <p className="text-slate-400 text-lg">Explore all my projects and their technologies</p>
+                <p className="text-slate-400 text-base lg:text-lg">Explore all my projects and their technologies</p>
               </div>
 
               <motion.button
                 onClick={onClose}
-                className="p-4 rounded-2xl hover:bg-slate-800/50 transition-all duration-300"
+                className="p-3 lg:p-4 rounded-2xl hover:bg-slate-800/50 transition-all duration-300"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2, duration: 0.3 }}
               >
-                <X className="h-7 w-7 text-slate-400 hover:text-white transition-colors duration-300" />
+                <X className="h-6 lg:h-7 w-6 lg:w-7 text-slate-400 hover:text-white transition-colors duration-300" />
               </motion.button>
             </motion.div>
 
             {/* Clean Projects Grid */}
-            <div className="p-8 overflow-y-auto max-h-[calc(90vh-140px)] custom-scrollbar">
-              <div className="grid gap-8 md:grid-cols-2">
+            <div className="p-6 lg:p-8 overflow-y-auto max-h-[calc(90vh-140px)] custom-scrollbar">
+              <div className="grid gap-6 lg:gap-8 md:grid-cols-2">
                 {projects.map((project, index) => (
                   <motion.div
                     key={index}
-                    className={`group relative p-8 rounded-3xl border ${project.borderColor} bg-gradient-to-br ${project.gradient} backdrop-blur-xl transition-all duration-500 cursor-pointer overflow-hidden`}
+                    className={`group relative p-6 lg:p-8 rounded-3xl border ${project.borderColor} bg-gradient-to-br ${project.gradient} backdrop-blur-xl transition-all duration-500 cursor-pointer overflow-hidden`}
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{
@@ -451,7 +547,7 @@ const ProjectArchive = ({ isOpen, onClose, projects }) => {
                     />
 
                     {/* Project Header */}
-                    <div className="flex items-start justify-between mb-6 relative z-10">
+                    <div className="flex flex-col sm:flex-row items-start justify-between mb-6 relative z-10 gap-4">
                       <motion.div
                         className={`p-4 rounded-2xl bg-gradient-to-r ${project.gradient} border ${project.borderColor} shadow-xl`}
                         whileHover={{ scale: 1.1, rotate: 5 }}
@@ -464,9 +560,11 @@ const ProjectArchive = ({ isOpen, onClose, projects }) => {
                     </div>
 
                     {/* Project Content */}
-                    <h3 className="text-2xl font-bold text-white mb-4 relative z-10">{project.title}</h3>
+                    <h3 className="text-xl lg:text-2xl font-bold text-white mb-4 relative z-10">{project.title}</h3>
 
-                    <p className="text-slate-300 text-base leading-relaxed mb-6 relative z-10">{project.description}</p>
+                    <p className="text-slate-300 text-sm lg:text-base leading-relaxed mb-6 relative z-10">
+                      {project.description}
+                    </p>
 
                     {/* Technologies */}
                     <div className="flex flex-wrap gap-2 mb-6 relative z-10">
@@ -530,7 +628,7 @@ const BackgroundMouseFollower = () => {
 
   return (
     <motion.div
-      className="pointer-events-none fixed inset-0 z-30 transition duration-300"
+      className="pointer-events-none fixed inset-0 z-30 transition duration-300 hidden lg:block"
       style={{
         background: `radial-gradient(600px at ${mousePosition.x}px ${mousePosition.y}px, rgba(6, 182, 212, 0.1), transparent 80%)`,
       }}
@@ -546,6 +644,7 @@ function App() {
   const [submitStatus, setSubmitStatus] = useState("")
   const [isLoaded, setIsLoaded] = useState(false)
   const [showProjectArchive, setShowProjectArchive] = useState(false)
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
   useEffect(() => {
     setIsLoaded(true)
@@ -569,6 +668,7 @@ function App() {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
   const handleFormSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
@@ -597,34 +697,6 @@ function App() {
     setTimeout(() => setSubmitStatus(""), 3000)
   }
 
-  //   const handleFormSubmit = async (e) => {
-  //   e.preventDefault()
-  //   setIsSubmitting(true)
-
-  //   try {
-  //     const result = await emailjs.send(
-  //       "service_ub6xvvs",      // Replace with your actual EmailJS service ID
-  //       "template_2dg4x8s",     // Replace with your actual template ID
-  //       {
-  //         from_name: formData.name,
-  //         from_email: formData.email,
-  //         message: formData.message,
-  //       },
-  //       "FA2P-SdtldwpoO-9M"       // Replace with your actual public key
-  //     )
-
-  //     console.log(result.text)
-  //     setSubmitStatus("success")
-  //     setFormData({ name: "", email: "", message: "" })
-  //   } catch (error) {
-  //     console.error(error)
-  //     setSubmitStatus("error")
-  //   }
-
-  //   setIsSubmitting(false)
-  //   setTimeout(() => setSubmitStatus(""), 3000)
-  // }
-
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
@@ -644,7 +716,7 @@ function App() {
     },
     backend: {
       title: "Backend Development",
-      skills: ["Node.js", "Python", "MongoDB","Flask"],
+      skills: ["Node.js", "Python", "MongoDB", "Flask"],
       icon: <Database className="h-6 w-6" />,
       gradient: "from-emerald-500/20 to-teal-500/20",
       borderColor: "border-emerald-400/50",
@@ -681,7 +753,7 @@ function App() {
       gradient: "from-emerald-500/20 to-teal-500/20",
       borderColor: "border-emerald-400/50",
       iconColor: "text-emerald-400",
-      googleDriveUrl: "public/Certifications/akshayMongoDB.pdf", // Example Google Drive URL
+      googleDriveUrl: "../assests/akshayMongoDB.pdf", // Example Google Drive URL
     },
     {
       title: "Azure AI Engineer Associate",
@@ -692,7 +764,7 @@ function App() {
       gradient: "from-blue-500/20 to-cyan-500/20",
       borderColor: "border-blue-400/50",
       iconColor: "text-blue-400",
-      googleDriveUrl: "public/Certifications/akshayAzure.pdf", // Example Google Drive URL
+      googleDriveUrl: "../assests/akshayAzure.pdf", // Example Google Drive URL
     },
   ]
 
@@ -712,8 +784,9 @@ function App() {
     },
     {
       title: "Image Based Product Recommendation System using DL",
-      description: "Built a system that recommends similar products based on image input using deep learning and an interactive Streamlit UI.",
-      technologies: ["Python","TensorFlow/Keras","CNN"," Streamlit"],
+      description:
+        "Built a system that recommends similar products based on image input using deep learning and an interactive Streamlit UI.",
+      technologies: ["Python", "TensorFlow/Keras", "CNN", " Streamlit"],
       icon: <Target className="h-6 w-6" />,
       link: "#",
       github: "https://github.com/AKSHAY-1205/Image-based-Product-Recommendation-System-using-Deep-Learning",
@@ -721,11 +794,11 @@ function App() {
       status: "Completed✅",
       borderColor: "border-emerald-400/50",
       textColor: "text-emerald-300",
-      // 🚀⏳
     },
     {
       title: "Blog Website",
-      description: "Developed a full-stack blog platform where users can create, edit, like, and comment on blog posts with seamless user experience.",
+      description:
+        "Developed a full-stack blog platform where users can create, edit, like, and comment on blog posts with seamless user experience.",
       technologies: ["React.js", "MongoDB", "Express.js", "Node.js"],
       icon: <Rocket className="h-6 w-6" />,
       link: "#",
@@ -737,11 +810,12 @@ function App() {
     },
     {
       title: "Food and Beverage Sales Analysis Dashboard",
-      description: "Designed an interactive Power BI dashboard to analyze sales performance, revenue trends, and customer insights in the food and beverage sector.",
+      description:
+        "Designed an interactive Power BI dashboard to analyze sales performance, revenue trends, and customer insights in the food and beverage sector.",
       technologies: ["Power BI", "DAX", "Data Modeling", "Data Cleaning (Power Query)", "Excel"],
       icon: <Globe className="h-6 w-6" />,
       link: "#",
-      github: "https://github.com/AKSHAY-1205/Food-And-Beverage-Sales-Analysis-Dashboard",      
+      github: "https://github.com/AKSHAY-1205/Food-And-Beverage-Sales-Analysis-Dashboard",
       status: "Live🚀",
       gradient: "from-orange-500/20 to-red-500/20",
       borderColor: "border-orange-400/50",
@@ -749,19 +823,21 @@ function App() {
     },
     {
       title: "Movie Recommendation System using Machine Learning",
-      description: "Built and deployed a machine learning-based system that suggests movies to users based on content similarity and preferences.",
-     technologies: ["Python", "Pandas", "Scikit-learn", "NLP", "TF-IDF", "Render"],
+      description:
+        "Built and deployed a machine learning-based system that suggests movies to users based on content similarity and preferences.",
+      technologies: ["Python", "Pandas", "Scikit-learn", "NLP", "TF-IDF", "Render"],
       icon: <Code className="h-6 w-6" />,
       link: "https://movie-recommendation-system-ml-1-66bo.onrender.com/",
-      status: "Live🚀",
       github: "https://github.com/AKSHAY-1205/Movie_Recommendation_System_ML",
       gradient: "from-purple-500/20 to-pink-500/20",
+      status: "Live🚀",
       borderColor: "border-purple-400/50",
       textColor: "text-purple-300",
     },
     {
       title: "Used Car Selling Price Detection",
-      description: " Developed and deployed a machine learning model to predict the selling price of used cars based on features like age, mileage, and fuel type.",
+      description:
+        " Developed and deployed a machine learning model to predict the selling price of used cars based on features like age, mileage, and fuel type.",
       technologies: ["Python", "Scikit-learn", "Pandas", "NumPy", "Pickle", "Streamlit"],
       icon: <Brain className="h-6 w-6" />,
       link: "https://used-car-selling-price-detection.streamlit.app/",
@@ -780,6 +856,7 @@ function App() {
       link: "#",
       github: "https://github.com/username/weather-prediction",
       gradient: "from-cyan-500/20 to-blue-500/20",
+      status: "Live🚀",
       borderColor: "border-cyan-400/50",
       textColor: "text-cyan-300",
     },
@@ -791,6 +868,7 @@ function App() {
       link: "#",
       github: "https://github.com/username/chat-app",
       gradient: "from-orange-500/20 to-red-500/20",
+      status: "Live🚀",
       borderColor: "border-orange-400/50",
       textColor: "text-orange-300",
     },
@@ -836,6 +914,13 @@ function App() {
       <FloatingParticles />
       <BackgroundMouseFollower />
 
+      {/* Mobile Navigation */}
+      <MobileNavigation
+        activeSection={activeSection}
+        isOpen={mobileNavOpen}
+        onToggle={() => setMobileNavOpen(!mobileNavOpen)}
+      />
+
       {/* Project Archive Modal */}
       <ProjectArchive isOpen={showProjectArchive} onClose={() => setShowProjectArchive(false)} projects={allProjects} />
 
@@ -857,14 +942,15 @@ function App() {
         }
       `}</style>
 
-      {/* Main Layout */}
-      <div className="flex min-h-screen">
-        {/* Left Sidebar */}
+      {/* Responsive Layout */}
+      <div className="lg:flex min-h-screen">
+        {/* Desktop Left Sidebar */}
         <motion.aside
-          className="fixed left-100 top-0 h-screen w-1/2 max-w-xl flex flex-col justify-between pl-12 pr-4 py-12 lg:pl-16 lg:pr-8 lg:py-24 z-40"
+          className="hidden lg:block fixed left-0 top-0 h-screen w-1/2 max-w-xl flex-col justify-between pl-12 pr-4 py-12 lg:pl-16 lg:pr-8 lg:py-24 z-40"
           initial={{ opacity: 0, x: -100 }}
           animate={{ opacity: isLoaded ? 1 : 0, x: isLoaded ? 0 : -100 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
+          style={{ display: "flex" }}
         >
           <div>
             <motion.div
@@ -874,7 +960,7 @@ function App() {
               transition={{ duration: 0.8, delay: 0.2 }}
             >
               <motion.h1
-                className="text-xl font-bold tracking-tight text-slate-200 sm:text-5xl mb-3 cursor-pointer"
+                className="text-4xl font-bold tracking-tight text-slate-200 sm:text-5xl mb-3 cursor-pointer"
                 whileHover={{
                   scale: 1.05,
                   color: "#ffffff",
@@ -900,7 +986,7 @@ function App() {
               </motion.p>
             </motion.div>
 
-            {/* Navigation */}
+            {/* Desktop Navigation */}
             <motion.nav
               className="nav"
               aria-label="In-page jump links"
@@ -951,7 +1037,7 @@ function App() {
             </motion.nav>
           </div>
 
-          {/* Social Links */}
+          {/* Desktop Social Links */}
           <motion.div
             className="mt-8"
             initial={{ opacity: 0, y: 30 }}
@@ -987,18 +1073,19 @@ function App() {
           </motion.div>
         </motion.aside>
 
-        {/* Right Column - Scrollable Content */}
+        {/* Main Content - Responsive */}
         <motion.main
-          className="ml-auto w-1/2 min-h-screen flex justify-center pr-8 lg:pr-16 xl:pr-20"
+          className="w-full lg:ml-auto lg:w-1/2 min-h-screen flex justify-center px-6 lg:pr-8 lg:pr-16 xl:pr-20"
           initial={{ opacity: 0, x: 100 }}
           animate={{ opacity: isLoaded ? 1 : 0, x: isLoaded ? 0 : 100 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <div className="max-w-3xl w-full py-12 lg:py-24 px-6 lg:px-8 xl:px-12">
+          <div className="max-w-3xl w-full py-20 lg:py-24 px-4 sm:px-6 lg:px-8 xl:px-12">
             {/* About Section */}
-            <section id="about" className="mb-16 scroll-mt-16 md:mb-24 lg:mb-36 lg:scroll-mt-24">
-              <div className="sticky top-0 z-20 -mx-6 mb-4 w-screen bg-slate-900/75 px-6 py-5 backdrop-blur md:-mx-12 md:px-12 lg:sr-only lg:relative lg:top-auto lg:mx-auto lg:w-full lg:px-0 lg:py-0 lg:opacity-0">
-                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-200 lg:sr-only">About</h2>
+            <section id="about" className="mb-12 md:mb-16 lg:mb-24">
+              {/* Mobile Section Title */}
+              <div className="lg:hidden mb-6">
+                <h2 className="text-xl font-bold text-slate-200 mb-2 border-b border-slate-700/30 pb-2">About</h2>
               </div>
 
               <motion.div
@@ -1009,28 +1096,20 @@ function App() {
                 viewport={{ once: true }}
               >
                 {[
-                  "I'm Akshay J, a final-year B.Tech student at Kongu Engineering College, specializing in Artificial Intelligence and Machine Learning. I’m passionate about building intelligent systems that not only solve real-world problems but also deliver great user experiences through full-stack development.",
+                  "I'm Akshay J, a final-year B.Tech student at Kongu Engineering College, specializing in Artificial Intelligence and Machine Learning. I'm passionate about building intelligent systems that not only solve real-world problems but also deliver great user experiences through full-stack development.",
                   "My expertise lies at the intersection of AI and software engineering — from developing deep learning models and computer vision applications to creating modern web platforms and deploying end-to-end solutions. I enjoy integrating machine learning into full-stack applications, leveraging tools like Streamlit, React, and MongoDB to bring ideas to life.",
                   "Outside academics, I actively explore advancements in generative AI and large language models, participate in hackathons, and contribute to open-source projects. I believe in learning by doing — every project I build pushes me closer to mastering the art of intelligent, user-centric software.",
-                  "",
                 ].map((paragraph, index) => (
                   <motion.p
                     key={index}
-                    className="leading-normal cursor-pointer"
-                    style={{
-                      fontSize: "1.125rem",
-                      lineHeight: "1.75rem",
-                      color: "rgb(148 163 183)",
-                      transition: "all 0.3s ease-in-out",
-                    }}
+                    className="leading-normal cursor-pointer text-base lg:text-lg text-slate-400 hover:text-white transition-all duration-300"
                     initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 15 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: index * 0.1 }}
                     viewport={{ once: true }}
                     whileHover={{
                       scale: 1.02,
                       x: 5,
-                      color: "#ffffff",
                     }}
                   >
                     {paragraph}
@@ -1040,12 +1119,13 @@ function App() {
             </section>
 
             {/* Skills Section */}
-            <section id="skills" className="mb-16 scroll-mt-16 md:mb-24 lg:mb-36 lg:scroll-mt-24">
-              <div className="sticky top-0 z-20 -mx-6 mb-4 w-screen bg-slate-900/75 px-6 py-5 backdrop-blur md:-mx-12 md:px-12 lg:sr-only lg:relative lg:top-auto lg:mx-auto lg:w-full lg:px-0 lg:py-0 lg:opacity-0">
-                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-200 lg:sr-only">Skills</h2>
+            <section id="skills" className="mb-12 md:mb-16 lg:mb-24">
+              {/* Mobile Section Title */}
+              <div className="lg:hidden mb-6">
+                <h2 className="text-xl font-bold text-slate-200 mb-2 border-b border-slate-700/30 pb-2">Skills</h2>
               </div>
 
-              <div className="grid gap-6 md:grid-cols-2">
+              <div className="grid gap-6 sm:grid-cols-2">
                 {Object.values(skills).map((skill, index) => (
                   <SkillCard
                     key={index}
@@ -1063,9 +1143,10 @@ function App() {
             </section>
 
             {/* Projects Section */}
-            <section id="projects" className="mb-16 scroll-mt-16 md:mb-24 lg:mb-36 lg:scroll-mt-24">
-              <div className="sticky top-0 z-20 -mx-6 mb-4 w-screen bg-slate-900/75 px-6 py-5 backdrop-blur md:-mx-12 md:px-12 lg:sr-only lg:relative lg:top-auto lg:mx-auto lg:w-full lg:px-0 lg:py-0 lg:opacity-0">
-                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-200 lg:sr-only">Projects</h2>
+            <section id="projects" className="mb-12 md:mb-16 lg:mb-24">
+              {/* Mobile Section Title */}
+              <div className="lg:hidden mb-6">
+                <h2 className="text-xl font-bold text-slate-200 mb-2 border-b border-slate-700/30 pb-2">Projects</h2>
               </div>
 
               <div>
@@ -1076,25 +1157,21 @@ function App() {
                         <div className="absolute -inset-x-4 -inset-y-4 z-0 hidden rounded-md transition motion-reduce:transition-none lg:-inset-x-6 lg:block lg:group-hover:bg-slate-800/50 lg:group-hover:shadow-[inset_0_1px_0_0_rgba(148,163,184,0.1)] lg:group-hover:drop-shadow-lg"></div>
 
                         <div className="z-10 sm:order-2 sm:col-span-6">
-                          <div className="flex items-start justify-between mb-2">
+                          <div className="flex flex-col sm:flex-row items-start justify-between mb-2 gap-4">
                             <motion.h3 whileHover={{ x: 5 }} transition={{ duration: 0.2 }}>
-                              <span
-                                className="inline-flex items-baseline font-medium leading-tight text-slate-200 hover:text-cyan-300 transition-colors duration-300"
-                                style={{ fontSize: "1.25rem" }}
-                              >
+                              <span className="inline-flex items-baseline font-medium leading-tight text-slate-200 hover:text-cyan-300 transition-colors duration-300 text-lg lg:text-xl">
                                 {project.title}
                               </span>
                             </motion.h3>
 
                             <ProjectActionButtons
                               project={project}
-                              className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                              className="opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                             />
                           </div>
 
                           <motion.p
-                            className="mt-2 leading-normal text-slate-400 hover:text-slate-300 transition-colors duration-300"
-                            style={{ fontSize: "1.125rem" }}
+                            className="mt-2 leading-normal text-slate-400 hover:text-slate-300 transition-colors duration-300 text-base lg:text-lg"
                             whileHover={{ x: 3 }}
                             transition={{ duration: 0.2 }}
                           >
@@ -1117,7 +1194,7 @@ function App() {
 
                         <div className="z-10 sm:order-1 sm:col-span-2 sm:translate-y-1">
                           <motion.div
-                            className={`rounded border-2 ${project.borderColor} transition group-hover:${project.borderColor} bg-gradient-to-br ${project.gradient} p-4 h-24 flex items-center justify-center group-hover:shadow-lg`}
+                            className={`rounded border-2 ${project.borderColor} transition group-hover:${project.borderColor} bg-gradient-to-br ${project.gradient} p-4 h-20 sm:h-24 flex items-center justify-center group-hover:shadow-lg`}
                             whileHover={{
                               scale: 1.05,
                               rotate: 2,
@@ -1140,8 +1217,7 @@ function App() {
                   viewport={{ once: true }}
                 >
                   <motion.button
-                    className="inline-flex items-center font-medium leading-tight text-slate-200 font-semibold group hover:text-cyan-300 transition-all duration-300 cursor-pointer relative overflow-hidden px-8 py-4 rounded-xl border border-cyan-400/30 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 backdrop-blur-sm"
-                    style={{ fontSize: "1.125rem" }}
+                    className="inline-flex items-center font-medium leading-tight text-slate-200 font-semibold group hover:text-cyan-300 transition-all duration-300 cursor-pointer relative overflow-hidden px-6 lg:px-8 py-3 lg:py-4 rounded-xl border border-cyan-400/30 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 backdrop-blur-sm text-base lg:text-lg"
                     onClick={() => setShowProjectArchive(true)}
                     whileHover={{
                       scale: 1.05,
@@ -1170,9 +1246,10 @@ function App() {
             </section>
 
             {/* Certifications Section */}
-            <section id="certifications" className="mb-16 scroll-mt-16 md:mb-24 lg:mb-36 lg:scroll-mt-24">
-              <div className="sticky top-0 z-20 -mx-6 mb-4 w-screen bg-slate-900/75 px-6 py-5 backdrop-blur md:-mx-12 md:px-12 lg:sr-only lg:relative lg:top-auto lg:mx-auto lg:w-full lg:px-0 lg:py-0 lg:opacity-0">
-                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-200 lg:sr-only">
+            <section id="certifications" className="mb-12 md:mb-16 lg:mb-24">
+              {/* Mobile Section Title */}
+              <div className="lg:hidden mb-6">
+                <h2 className="text-xl font-bold text-slate-200 mb-2 border-b border-slate-700/30 pb-2">
                   Certifications
                 </h2>
               </div>
@@ -1185,12 +1262,13 @@ function App() {
             </section>
 
             {/* Contact Section */}
-            <section id="contact" className="mb-16 scroll-mt-16 md:mb-24 lg:mb-36 lg:scroll-mt-24">
-              <div className="sticky top-0 z-20 -mx-6 mb-4 w-screen bg-slate-900/75 px-6 py-5 backdrop-blur md:-mx-12 md:px-12 lg:sr-only lg:relative lg:top-auto lg:mx-auto lg:w-full lg:px-0 lg:py-0 lg:opacity-0">
-                <h2 className="text-sm font-bold uppercase tracking-widest text-slate-200 lg:sr-only">Contact</h2>
+            <section id="contact" className="mb-12 md:mb-16 lg:mb-24">
+              {/* Mobile Section Title */}
+              <div className="lg:hidden mb-6">
+                <h2 className="text-xl font-bold text-slate-200 mb-2 border-b border-slate-700/30 pb-2">Contact</h2>
               </div>
 
-              <div className="grid gap-8 md:grid-cols-2">
+              <div className="grid gap-8 lg:grid-cols-2">
                 {/* Contact Info */}
                 <div className="space-y-6">
                   {[
@@ -1239,9 +1317,7 @@ function App() {
                         >
                           <contact.icon className={`h-4 w-4 ${contact.iconColor}`} />
                         </motion.div>
-                        <h3 className="font-medium text-slate-200" style={{ fontSize: "1.125rem" }}>
-                          {contact.title}
-                        </h3>
+                        <h3 className="font-medium text-slate-200 text-base lg:text-lg">{contact.title}</h3>
                       </div>
                       <p className="text-slate-400 text-sm">{contact.value}</p>
                     </motion.div>
@@ -1250,7 +1326,7 @@ function App() {
 
                 {/* Contact Form */}
                 <motion.div
-                  className="p-8 rounded-xl border border-slate-700/50 bg-gradient-to-br from-slate-800/30 to-slate-900/30 backdrop-blur-sm"
+                  className="p-6 lg:p-8 rounded-xl border border-slate-700/50 bg-gradient-to-br from-slate-800/30 to-slate-900/30 backdrop-blur-sm"
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.3 }}
