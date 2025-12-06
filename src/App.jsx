@@ -26,6 +26,7 @@ import {
   Eye,
   Download,
   Menu,
+  Server,
 } from "lucide-react"
 
 // Enhanced Badge Component
@@ -427,45 +428,42 @@ const CertificationCard = ({ certification, index }) => {
 }
 
 // Project Action Buttons Component (Clean version)
-const ProjectActionButtons = ({ project, className = "" }) => {
+const ProjectActionButtons = ({ project }) => {
   return (
-    <div className={`flex gap-2 ${className}`}>
-      <motion.a
-        href={project.github}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group relative p-2.5 rounded-lg bg-slate-800/50 border border-slate-700/50 hover:border-slate-600 transition-all duration-300 backdrop-blur-sm"
-        whileHover={{
-          scale: 1.1,
-          y: -2,
-        }}
-        whileTap={{ scale: 0.95 }}
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
-      >
-        <Github className="h-4 w-4 text-slate-300 group-hover:text-white transition-colors duration-300" />
-      </motion.a>
+    <div className="flex items-center gap-3 relative z-10">
+      {/* GitHub button – always shown if github link exists */}
+      {project.github && (
+        <a
+          href={project.github}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-2 px-3 py-2 rounded-2xl bg-slate-900/70 border border-slate-600/70
+                     text-slate-100 text-sm font-medium hover:bg-slate-800 hover:border-slate-400
+                     transition-all duration-300"
+        >
+          <Github className="w-4 h-4" />
+          <span>Code</span>
+        </a>
+      )}
 
-      <motion.a
-        href={project.link}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group relative p-2.5 rounded-lg bg-gradient-to-r from-cyan-600/20 to-blue-600/20 border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 backdrop-blur-sm"
-        whileHover={{
-          scale: 1.1,
-          y: -2,
-        }}
-        whileTap={{ scale: 0.95 }}
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.3, delay: 0.2 }}
-      >
-        <ExternalLink className="h-4 w-4 text-cyan-300 group-hover:text-white transition-colors duration-300" />
-      </motion.a>
+      {/* Live Demo button – ONLY if project.link is not null */}
+      {project.link && (
+        <a
+          href={project.link}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-2 px-3 py-2 rounded-2xl bg-cyan-500/90
+                     text-slate-900 text-sm font-semibold hover:bg-cyan-400
+                     shadow-md shadow-cyan-500/30 transition-all duration-300"
+        >
+          <ExternalLink className="w-4 h-4" />
+          <span>Live</span>
+        </a>
+      )}
     </div>
-  )
-}
+  );
+};
+
 
 // Smooth Project Archive Modal
 const ProjectArchive = ({ isOpen, onClose, projects }) => {
@@ -705,24 +703,16 @@ function App() {
   }
 
   const skills = {
-    frontend: {
-      title: "Frontend Development",
-      skills: ["React", "Next.js", "TypeScript", "Tailwind CSS"],
-      icon: <Globe className="h-6 w-6" />,
-      gradient: "from-cyan-500/20 to-blue-500/20",
-      borderColor: "border-cyan-400/50",
-      textColor: "text-cyan-300",
-      shadowColor: "shadow-cyan-500/30",
+    devops: {
+      title: "DevOps",
+      skills: ["AWS", "Ansible", "Terraform", "Docker","Linux", "CI/CD"],
+      icon: <Server className="h-6 w-6" />, // you can also use Wrench, Cog, Cloud, etc.
+      gradient: "from-orange-500/20 to-red-500/20",
+      borderColor: "border-orange-400/50",
+      textColor: "text-orange-300",
+      shadowColor: "shadow-orange-500/30",
     },
-    backend: {
-      title: "Backend Development",
-      skills: ["Node.js", "Python", "MongoDB", "Flask"],
-      icon: <Database className="h-6 w-6" />,
-      gradient: "from-emerald-500/20 to-teal-500/20",
-      borderColor: "border-emerald-400/50",
-      textColor: "text-emerald-300",
-      shadowColor: "shadow-emerald-500/30",
-    },
+
     ai: {
       title: "Artificial Intelligence",
       skills: ["ML", "DL", "OpenCV", "TL", "Pandas"],
@@ -732,16 +722,28 @@ function App() {
       textColor: "text-purple-300",
       shadowColor: "shadow-purple-500/30",
     },
-    tools: {
-      title: "Tools & Platforms",
-      skills: ["Git", "Docker", "AWS", "Vercel", "Figma"],
-      icon: <Code className="h-6 w-6" />,
-      gradient: "from-orange-500/20 to-red-500/20",
-      borderColor: "border-orange-400/50",
-      textColor: "text-orange-300",
-      shadowColor: "shadow-orange-500/30",
+
+    frontend: {
+      title: "Frontend Development",
+      skills: ["React", "Next.js", "JavaScript", "Tailwind CSS"],
+      icon: <Globe className="h-6 w-6" />,
+      gradient: "from-cyan-500/20 to-blue-500/20",
+      borderColor: "border-cyan-400/50",
+      textColor: "text-cyan-300",
+      shadowColor: "shadow-cyan-500/30",
     },
-  }
+
+    backend: {
+      title: "Backend Development",
+      skills: ["Node.js", "Python","Firebase", "MongoDB", "Flask"],
+      icon: <Database className="h-6 w-6" />,
+      gradient: "from-emerald-500/20 to-teal-500/20",
+      borderColor: "border-emerald-400/50",
+      textColor: "text-emerald-300",
+      shadowColor: "shadow-emerald-500/30",
+    },
+  };
+
 
   const certifications = [
     {
@@ -770,15 +772,56 @@ function App() {
 
   const allProjects = [
     {
+      title: "Terraform AWS EC2 + Flask Automation",
+      description:
+        "Fully automated deployment workflow using Terraform to provision AWS EC2, configure networking, and run a Flask web application with zero manual setup.",
+      technologies: [
+        "Terraform",
+        "AWS",
+        "EC2",
+        "Flask",
+        "Python",
+        "IaC"
+      ],
+      icon: <Rocket className="h-6 w-6" />,
+      link: null,
+      github: "https://github.com/AKSHAY-1205/terraform-ec2-flask", 
+      gradient: "from-yellow-500/20 to-orange-500/20",
+      status: "Code Only⚙️",
+      borderColor: "border-yellow-400/50",
+      textColor: "text-yellow-300",
+    },
+    {
+      title: "Ansible AWS EC2 Manager",
+      description:
+        "DevOps automation project that manages AWS EC2 lifecycle using Ansible — provisioning instances, setting up passwordless SSH, and selectively stopping Ubuntu-based EC2s with Ansible facts.",
+      technologies: [
+        "Ansible",
+        "AWS",
+        "EC2",
+        "Ansible Vault",
+        "Python (boto3)",
+        "Automation"
+      ],
+      icon: <Rocket className="h-6 w-6" />,
+      link: null, // no live demo – infra-focused project
+      github: "https://github.com/AKSHAY-1205/ansible-ec2-manager", // replace with actual
+      gradient: "from-emerald-500/20 to-teal-500/20",
+      status: "Code Only⚙️",
+      borderColor: "border-emerald-400/50",
+      textColor: "text-emerald-300",
+    },
+
+    {
       title: "Product Recommendation System using ML",
       description:
         "Built an intelligent recommendation system using machine learning that analyzes customer behavior and preferences to suggest products.",
       technologies: ["Python", "TensorFlow", "Streamlit"],
       icon: <Brain className="h-6 w-6" />,
-      link: "http://3.110.118.24:8501/",
+      link: null,
       github: "https://github.com/AKSHAY-1205/Product-Recommendation-System",
       gradient: "from-purple-500/20 to-pink-500/20",
-      status: "Completed✅",
+      status: "Completed",
       borderColor: "border-purple-400/50",
       textColor: "text-purple-300",
     },
@@ -788,10 +831,10 @@ function App() {
         "Built a system that recommends similar products based on image input using deep learning and an interactive Streamlit UI.",
       technologies: ["Python", "TensorFlow/Keras", "CNN", " Streamlit"],
       icon: <Target className="h-6 w-6" />,
-      link: "#",
+      link: null,
       github: "https://github.com/AKSHAY-1205/Image-based-Product-Recommendation-System-using-Deep-Learning",
       gradient: "from-emerald-500/20 to-teal-500/20",
-      status: "Completed✅",
+      status: "Completed",
       borderColor: "border-emerald-400/50",
       textColor: "text-emerald-300",
     },
@@ -801,10 +844,10 @@ function App() {
         "Developed a full-stack blog platform where users can create, edit, like, and comment on blog posts with seamless user experience.",
       technologies: ["React.js", "MongoDB", "Express.js", "Node.js"],
       icon: <Rocket className="h-6 w-6" />,
-      link: "#",
+      link: null,
       github: "https://github.com/AKSHAY-1205/NOTELIFT-Blog-",
       gradient: "from-cyan-500/20 to-blue-500/20",
-      status: "Completed✅",
+      status: "Completed",
       borderColor: "border-cyan-400/50",
       textColor: "text-cyan-300",
     },
@@ -814,9 +857,9 @@ function App() {
         "Designed an interactive Power BI dashboard to analyze sales performance, revenue trends, and customer insights in the food and beverage sector.",
       technologies: ["Power BI", "DAX", "Data Modeling", "Data Cleaning (Power Query)", "Excel"],
       icon: <Globe className="h-6 w-6" />,
-      link: "#",
+      link: null,
       github: "https://github.com/AKSHAY-1205/Food-And-Beverage-Sales-Analysis-Dashboard",
-      status: "Live🚀",
+      status: "Completed",
       gradient: "from-orange-500/20 to-red-500/20",
       borderColor: "border-orange-400/50",
       textColor: "text-orange-300",
@@ -847,31 +890,7 @@ function App() {
       borderColor: "border-emerald-400/50",
       textColor: "text-emerald-300",
     },
-    {
-      title: "Weather Prediction ML Model",
-      description:
-        "Machine learning model for accurate weather prediction using historical data and multiple algorithms.",
-      technologies: ["Python", "Scikit-learn", "Pandas", "Flask", "Docker"],
-      icon: <Target className="h-6 w-6" />,
-      link: "#",
-      github: "https://github.com/username/weather-prediction",
-      gradient: "from-cyan-500/20 to-blue-500/20",
-      status: "Live🚀",
-      borderColor: "border-cyan-400/50",
-      textColor: "text-cyan-300",
-    },
-    {
-      title: "Real-time Chat Application",
-      description: "Modern chat application with real-time messaging, file sharing, and video calling features.",
-      technologies: ["React", "Socket.io", "Node.js", "WebRTC", "MongoDB"],
-      icon: <Rocket className="h-6 w-6" />,
-      link: "#",
-      github: "https://github.com/username/chat-app",
-      gradient: "from-orange-500/20 to-red-500/20",
-      status: "Live🚀",
-      borderColor: "border-orange-400/50",
-      textColor: "text-orange-300",
-    },
+
   ]
 
   const featuredProjects = allProjects.slice(0, 3)
@@ -974,7 +993,7 @@ function App() {
                 whileHover={{ color: "#e2e8f0" }}
                 transition={{ duration: 0.3 }}
               >
-                AI/ML Engineer & Full Stack Developer
+               AI/ML Engineer | DevOps Engineer
               </motion.h2>
               <motion.p
                 className="text-slate-400 text-xl leading-normal max-w-sm"
@@ -982,7 +1001,7 @@ function App() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.6 }}
               >
-                I build accessible, pixel-perfect digital experiences powered by artificial intelligence.
+                I build scalable, cloud-driven systems and intelligent applications powered by AI.
               </motion.p>
             </motion.div>
 
@@ -1096,24 +1115,23 @@ function App() {
                 viewport={{ once: true }}
               >
                 {[
-                  "I'm Akshay J, a final-year B.Tech student at Kongu Engineering College, specializing in Artificial Intelligence and Machine Learning. I'm passionate about building intelligent systems that not only solve real-world problems but also deliver great user experiences through full-stack development.",
-                  "My expertise lies at the intersection of AI and software engineering — from developing deep learning models and computer vision applications to creating modern web platforms and deploying end-to-end solutions. I enjoy integrating machine learning into full-stack applications, leveraging tools like Streamlit, React, and MongoDB to bring ideas to life.",
-                  "Outside academics, I actively explore advancements in generative AI and large language models, participate in hackathons, and contribute to open-source projects. I believe in learning by doing — every project I build pushes me closer to mastering the art of intelligent, user-centric software.",
-                ].map((paragraph, index) => (
+                    "I'm Akshay J, a final-year B.Tech student at Kongu Engineering College specializing in Artificial Intelligence and DevOps engineering. I focus on building reliable, automated systems while integrating AI to solve real-world problems efficiently.",
+                    
+                    "My core strengths lie in cloud infrastructure management, automation, and deployment pipelines using AWS, Terraform, Ansible, and Docker. Alongside DevOps, I work extensively with machine learning and computer vision, enabling me to build end-to-end AI-driven systems that are production-ready and scalable.",
+                    
+                    "I also enjoy creating full-stack applications that bring AI models to life through practical user interfaces and real-time functionality. I constantly explore the latest advancements in MLOps, generative AI, and cloud-native technologies—driven by a mindset of continuous learning and hands-on experimentation."
+                  ].map((paragraph, index) => (
                   <motion.p
                     key={index}
-                    className="leading-normal cursor-pointer text-base lg:text-lg text-slate-400 hover:text-white transition-all duration-300"
+                    className="leading-normal text-base lg:text-lg text-slate-300 md:text-slate-200 transition-colors duration-300"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: index * 0.1 }}
                     viewport={{ once: true }}
-                    whileHover={{
-                      scale: 1.02,
-                      x: 5,
-                    }}
                   >
                     {paragraph}
                   </motion.p>
+
                 ))}
               </motion.div>
             </section>
