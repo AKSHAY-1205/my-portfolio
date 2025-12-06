@@ -963,14 +963,40 @@ function App() {
 
       {/* Responsive Layout */}
       <div className="lg:flex min-h-screen">
+          {/* 1️⃣ Mobile Hero – only on small screens */}
+        {/* Mobile Hero – only visible on small screens */}
+            <section className="lg:hidden px-6 pt-8 pb-0">
+              <h1 className="text-3xl font-extrabold tracking-tight text-slate-200">
+                Akshay
+              </h1>
+
+              <p className="mt-2 text-lg font-semibold text-slate-200">
+                AI/ML Engineer | DevOps Engineer
+              </p>
+
+              <p className="mt-3 text-base text-slate-300 max-w-md leading-relaxed sm:text-lg">
+                I build scalable, cloud-driven systems and intelligent applications powered by AI.
+              </p>
+
+              
+            </section>
+
         {/* Desktop Left Sidebar */}
-        <motion.aside
-          className="hidden lg:block fixed left-0 top-0 h-screen w-1/2 max-w-xl flex-col justify-between pl-12 pr-4 py-12 lg:pl-16 lg:pr-8 lg:py-24 z-40"
-          initial={{ opacity: 0, x: -100 }}
-          animate={{ opacity: isLoaded ? 1 : 0, x: isLoaded ? 0 : -100 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          style={{ display: "flex" }}
-        >
+                  <motion.aside
+            className="
+              hidden           /* hide on mobile */
+              lg:flex          /* show as flex on lg+ */
+              lg:fixed lg:left-0 lg:top-0
+              lg:h-screen lg:w-1/2 lg:max-w-xl
+              lg:flex-col lg:justify-between
+              pl-12 pr-4 py-12
+              lg:pl-16 lg:pr-8 lg:py-24
+              z-40
+            "
+            initial={{ opacity: 0, x: -100 }}
+            animate={{ opacity: isLoaded ? 1 : 0, x: isLoaded ? 0 : -100 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
           <div>
             <motion.div
               className="group mb-8"
