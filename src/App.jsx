@@ -771,6 +771,27 @@ function App() {
   ]
 
   const allProjects = [
+      {
+      title: "Amazon EKS 2048 Game Deployment",
+      description:
+        "End-to-end deployment of a containerized 2048 game on Amazon EKS using AWS Fargate for serverless compute and Ingress backed by an Application Load Balancer (ALB), implementing secure IAM (IRSA) and cost-aware cloud practices.",
+      technologies: [
+        "AWS",
+        "Amazon EKS",
+        "Kubernetes",
+        "AWS Fargate",
+        "ALB",
+        "Helm",
+        "IAM (IRSA)"
+      ],
+      icon: <Rocket className="h-6 w-6" />,
+      link: null,
+      github: "https://github.com/AKSHAY-1205/EKS-game-deploy", 
+      gradient: "from-indigo-500/20 to-blue-500/20",
+      status: "Production-Style Deployment 🚀",
+      borderColor: "border-indigo-400/50",
+      textColor: "text-indigo-300",
+    },
     {
       title: "Terraform AWS EC2 + Flask Automation",
       description:
@@ -812,19 +833,7 @@ function App() {
       textColor: "text-emerald-300",
     },
 
-    {
-      title: "Product Recommendation System using ML",
-      description:
-        "Built an intelligent recommendation system using machine learning that analyzes customer behavior and preferences to suggest products.",
-      technologies: ["Python", "TensorFlow", "Streamlit"],
-      icon: <Brain className="h-6 w-6" />,
-      link: null,
-      github: "https://github.com/AKSHAY-1205/Product-Recommendation-System",
-      gradient: "from-purple-500/20 to-pink-500/20",
-      status: "Completed",
-      borderColor: "border-purple-400/50",
-      textColor: "text-purple-300",
-    },
+   
     {
       title: "Image Based Product Recommendation System using DL",
       description:
